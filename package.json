@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest --watchAll"
   },
   "engines": {
     "node": "10.x"
@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "eslint": "^5.15.3",
-    "nodemon": "^1.18.10"
+    "jest": "^24.7.1",
+    "nodemon": "^1.18.10",
+    "supertest": "^4.0.2"
   }
 }
