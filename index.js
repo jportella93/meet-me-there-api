@@ -16,7 +16,9 @@ app
   .use(cors())
   .use(logger())
   .use(bodyParser())
-  .use(router.routes());
+  .use(router.routes())
+  .use(router.allowedMethods());
+
 
 const server = app.listen(
   PORT,
