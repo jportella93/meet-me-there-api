@@ -1,8 +1,8 @@
-'use strict';
 const Router = require('koa-router');
-
 const router = new Router();
-const flightsController = require('./flightsController')
+
+// Controllers
+const flightsController = require('./controllers').flights
 
 router.get('/flights', async (ctx, next) => {
   let { dateFrom, dateTo, origins, destination } = ctx.query;
