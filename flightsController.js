@@ -2,7 +2,7 @@ const axios = require('axios');
 const apiKey = process.env.API_KEY;
 const baseUrl = 'https://kiwicom-prod.apigee.net/v2';
 
-function getFlightsForOneOrigin({flyFrom, flyTo, dateFrom, dateTo}) {
+function getFlightsForOneOrigin({ flyFrom, flyTo, dateFrom, dateTo }) {
   return new Promise(async (resolve, reject) => {
     try {
       const url = `${baseUrl}/search?fly_from=${flyFrom}${flyTo ? `&fly_to=${flyTo}` : ''}&dateFrom=${dateFrom}&dateTo=${dateTo}`
@@ -15,7 +15,7 @@ function getFlightsForOneOrigin({flyFrom, flyTo, dateFrom, dateTo}) {
       const parsedData = []
       response.data.data.forEach(flight => {
         const { cityTo, flyTo, cityFrom, flyFrom, price, utc_arrival: UTCArrival, utc_departure: UTCDeparture,
-        route, deep_link: deepLink, local_departure: localDeparture, local_arrival: localArrival } = flight;
+          route, deep_link: deepLink, local_departure: localDeparture, local_arrival: localArrival } = flight;
 
         parsedData.push({
           price,
@@ -51,8 +51,8 @@ function groupFlights(origins) {
   return commonFlights;
 }
 
-function filterFlightsWithoutAllOrigins(groupedFlights, origins){
-  const copyOfGroupedFlights = {...groupedFlights};
+function filterFlightsWithoutAllOrigins(groupedFlights, origins) {
+  const copyOfGroupedFlights = { ...groupedFlights };
   for (let destination in copyOfGroupedFlights) {
     if (!origins.every(origin => copyOfGroupedFlights[destination].some(flight => flight.flyFrom === origin.flyFrom))) {
       delete copyOfGroupedFlights[destination];
@@ -61,13 +61,13 @@ function filterFlightsWithoutAllOrigins(groupedFlights, origins){
   return copyOfGroupedFlights
 }
 
-module.exports.getFlights = async ({dateFrom, dateTo, origins}) => {
+module.exports.getFlights = async ({ dateFrom, dateTo, origins }) => {
   const formattedOrigins = [];
   origins.forEach(origin => formattedOrigins.push({
     flyFrom: origin,
     dateFrom,
     dateTo,
-    })
+  })
   )
 
   const parsedFlights = await Promise.all(formattedOrigins.map(origin => getFlightsForOneOrigin(origin)))
@@ -76,17 +76,17 @@ module.exports.getFlights = async ({dateFrom, dateTo, origins}) => {
 
   const destinationsWithAllOrigins = filterFlightsWithoutAllOrigins(flightsGroupedByDestination, formattedOrigins)
 
-	return destinationsWithAllOrigins;
+  return destinationsWithAllOrigins;
 }
 
-module.exports.getFlightsForOneDestination = async ({dateFrom, dateTo, origins, destination}) => {
+module.exports.getFlightsForOneDestination = async ({ dateFrom, dateTo, origins, destination }) => {
   const formattedOrigins = [];
   origins.forEach(origin => formattedOrigins.push({
     flyFrom: origin,
     flyTo: destination,
     dateFrom,
     dateTo,
-    })
+  })
   )
 
   const parsedFlights = await Promise.all(formattedOrigins.map(origin => getFlightsForOneOrigin(origin)))

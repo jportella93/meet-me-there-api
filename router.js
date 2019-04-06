@@ -5,7 +5,7 @@ const router = new Router();
 const flightsController = require('./flightsController')
 
 router.get('/flights', async (ctx, next) => {
-  let {dateFrom, dateTo, origins, destination} = ctx.query;
+  let { dateFrom, dateTo, origins, destination } = ctx.query;
 
   if (!dateFrom || !dateTo || !origins) {
     const missingParams = [];
@@ -21,9 +21,9 @@ router.get('/flights', async (ctx, next) => {
     origins = origins.split(',');
 
     if (destination) {
-      ctx.body = await flightsController.getFlightsForOneDestination({dateFrom, dateTo, origins, destination})
+      ctx.body = await flightsController.getFlightsForOneDestination({ dateFrom, dateTo, origins, destination })
     } else {
-      ctx.body = await flightsController.getFlights({dateFrom, dateTo, origins})
+      ctx.body = await flightsController.getFlights({ dateFrom, dateTo, origins })
     }
   }
 });
