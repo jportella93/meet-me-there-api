@@ -1,36 +1,41 @@
 const axios = require('axios');
 const apiKey = process.env.API_KEY;
+const baseUrl = 'https://kiwicom-prod.apigee.net/v2';
 
 function getFlightsForOneOrigin({flyFrom, flyTo, dateFrom, dateTo}) {
-  return new Promise((resolve, reject) => {
-    axios.get(`https://kiwicom-prod.apigee.net/v2/search?fly_from=${flyFrom}${flyTo ? `&fly_to=${flyTo}` : ''}&dateFrom=${dateFrom}&dateTo=${dateTo}`, {
-      headers: {
-        apiKey,
-      },
-    })
-      .then(response => {
-        const parsedData = []
-        response.data.data.forEach(flight => {
-          const { cityTo, flyTo, cityFrom, flyFrom, price, utc_arrival: UTCArrival, utc_departure: UTCDeparture,
-          route, deep_link: deepLink, local_departure: localDeparture, local_arrival: localArrival } = flight;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const url = `${baseUrl}/search?fly_from=${flyFrom}${flyTo ? `&fly_to=${flyTo}` : ''}&dateFrom=${dateFrom}&dateTo=${dateTo}`
+      const response = await axios.get(url, {
+        headers: {
+          apiKey,
+        },
+      });
 
-          parsedData.push({
-            price,
-            cityFrom,
-            cityTo,
-            flyFrom,
-            localDeparture,
-            UTCDeparture,
-            flyTo,
-            localArrival,
-            UTCArrival,
-            deepLink
-          })
-          if (route.length > 1) parsedData[route] = route;
-        });
+      const parsedData = []
+      response.data.data.forEach(flight => {
+        const { cityTo, flyTo, cityFrom, flyFrom, price, utc_arrival: UTCArrival, utc_departure: UTCDeparture,
+        route, deep_link: deepLink, local_departure: localDeparture, local_arrival: localArrival } = flight;
 
-        resolve(parsedData)
-      })
+        parsedData.push({
+          price,
+          cityFrom,
+          cityTo,
+          flyFrom,
+          localDeparture,
+          UTCDeparture,
+          flyTo,
+          localArrival,
+          UTCArrival,
+          deepLink
+        })
+        if (route.length > 1) parsedData[route] = route;
+      });
+
+      resolve(parsedData)
+    } catch (error) {
+      reject(error)
+    }
   })
 }
 
